@@ -6,10 +6,10 @@ const FightPage = () => {
   return (
     <Grid container width="100vw" spacing={6} padding={2}>
       <Grid size={6}>
-        <TeamInfo />
+        <TeamInfo trainerName="Player 1" />
       </Grid>
       <Grid size={6}>
-        <TeamInfo direction="right" />
+        <TeamInfo trainerName="Player 2" direction="right" />
       </Grid>
       <Grid size={6} display="flex" justifyContent="center">
         <Paper elevation={3} sx={{ height: 400, aspectRatio: "1 / 1" }}  />
