@@ -1,12 +1,12 @@
 import './App.css'
-import { Button, Skeleton, Stack, Typography } from '@mui/material'
-import Landing from './pages/Landing'
+import Landing from './pages/LandingPage'
+import SelectTeamPage from './pages/SelectTeamPage'
 
 function App() {
 
   return (
     <>
-      <Landing />
+      <SelectTeamPage />
     </>
   )
 }
