@@ -85,7 +85,6 @@ export class BattleService {
 
   onListenWSLobbyStatus(callback: (data: Battle) => void) {
     BattleService._socket.onmessage = (event) => {
-      console.log(event.data);
       const { type, payload } = JSON.parse(event.data);
       if (type !== "lobbyStatus") return;
       callback(payload);

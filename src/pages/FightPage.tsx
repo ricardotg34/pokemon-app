@@ -25,7 +25,6 @@ const FightPage = () => {
 
   useEffect(() => {
     if (state.battleState?.status === "finished") {
-      console.log(state.battleState?.players[i!]?.pokemonTeam);
       if (state.battleState?.players[i!]?.pokemonTeam.every((p) => p?.hp === 0))
         setPlayerResult("lose");
       else setPlayerResult("win");

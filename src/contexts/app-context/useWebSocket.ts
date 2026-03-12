@@ -23,7 +23,6 @@ const useWebSocket = () => {
       setIsReady(false);
     };
     socket.onmessage = (event) => {
-      console.log(event.data);
       const { type, payload } = JSON.parse(event.data);
       if (type === "lobby_status") lobbyStatusCallback(payload);
       if (type === "battle_start") battleStartCallback( CurrentPage.BATTLE, payload.turn, payload.status );

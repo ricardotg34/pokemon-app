@@ -14,7 +14,6 @@ const FighterInfo = ({ direction = "left", active, name, hp }: FighterInfoProps)
 
   useEffect(() => {
     setInitialHP(hp);
-    console.log("Effect");
   }, [name])
 
   const hpPercent = hp/initialHP*100;

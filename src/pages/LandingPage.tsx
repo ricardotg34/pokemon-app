@@ -31,8 +31,7 @@ const LandingPage = () => {
   const handleJoinLobbyAction = async (formData: FormData) => {
     const nickname = formData.get("nickname");
     try {
-      const data = await BattleService.instance.joinLobby(nickname!.toString());
-      console.log(data);
+      await BattleService.instance.joinLobby(nickname!.toString());
       setDialogError(undefined);
       handleCloseJoinLobby();
       setPlayerName(nickname!.toString())
@@ -45,7 +44,6 @@ const LandingPage = () => {
 
   const handleAction = async (formData: FormData) => {
     const serverUrl = formData.get("server-url");
-    console.log(serverUrl)
     try {
       const url = new URL(serverUrl!.toString());
       await BattleService.instance.connectToServer(url.toString());
