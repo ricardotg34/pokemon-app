@@ -28,6 +28,7 @@ const useWebSocket = () => {
       if (type === "lobby_status") lobbyStatusCallback(payload);
       if (type === "battle_start") battleStartCallback( CurrentPage.BATTLE, payload.turn, payload.status );
       if (type === "turn_result") turnResultCallback( payload.turn, payload.players );
+      if (type === "battle_end") battleStartCallback( CurrentPage.BATTLE, -1, payload );
     };
 
     ws.current = socket;

@@ -32,8 +32,13 @@ export const useHandleApp = () => {
    const setBattleStatus = (currentPage: CurrentPage, turn: number, status: BattleStatus) => {
     dispatch({
       type: Actions.SET_BATTLE_STATUS,
-      payload: { currentPage, status, turn }
+      payload: { status, turn }
+    });
+     dispatch({
+      type: Actions.SET_CURRENT_PAGE,
+      payload: currentPage
     })
+
    }
 
    const setTurnRestult = (turn: number, players: [PlayerItem, PlayerItem]) => {

@@ -13,7 +13,7 @@ export enum Actions {
 type SetPlayerName = Action<string, Actions.SET_PLAYER_NAME>
 type SetCurrentPage = Action<CurrentPage, Actions.SET_CURRENT_PAGE>
 type SetBattleState = Action<Battle, Actions.SET_BATTLE_STATE>
-type SetBattleStatus = Action<{currentPage: CurrentPage, status: BattleStatus, turn: number}, Actions.SET_BATTLE_STATUS>
+type SetBattleStatus = Action<{status: BattleStatus, turn: number}, Actions.SET_BATTLE_STATUS>
 type SetTurnResult = Action<{turn: number, players: [PlayerItem, PlayerItem]}, Actions.SET_TURN_RESULT>
 
 type AppActions = SetPlayerName | SetCurrentPage | SetBattleState | SetBattleStatus | SetTurnResult
@@ -39,7 +39,6 @@ export const appReducer = (state: AppState, action: AppActions): AppState => {
     case Actions.SET_BATTLE_STATUS:
       return {
         ...state,
-        currentPage: action.payload.currentPage,
         battleState: {
           ...state.battleState!,
           status: action.payload.status,
