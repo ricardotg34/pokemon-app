@@ -7,7 +7,7 @@ import { AppContext } from "../app-context/app-context";
 import { CurrentPage } from "../domain/interfaces/app-state.interface";
 
 const LandingPage = () => {
-  const { setCurrentPage, setPlayerName } = useContext(AppContext)
+  const { setCurrentPage, setPlayerName, setSocketConnection, setBattleStatus, setBattleState } = useContext(AppContext)
   const [openConnectServerDialog, setOpenConnectServerDialog] = useState(false);
   const [openJoinLobbyDialog, setOpenJoinLobbyDialog] = useState(false);
   const [isServerConnected, setServerConnected] = useState(false);
@@ -45,14 +45,17 @@ const LandingPage = () => {
 
   const handleAction = async (formData: FormData) => {
     const serverUrl = formData.get("server-url");
+    console.log(serverUrl)
     try {
       const url = new URL(serverUrl!.toString());
       await BattleService.instance.connectToServer(url.toString());
-      BattleService.instance.url = url.toString();
+      BattleService.url = url.toString();
+      setSocketConnection(url.toString(), setBattleState, setBattleStatus)
       setServerConnected(true);
       setDialogError(undefined);
       handleCloseConnectServer();
     } catch (error) {
+      console.log(error)
       if(error instanceof TypeError) setDialogError("Type a valid URL");
       else setDialogError("Unable to connect the server.");
     }

@@ -1,6 +1,7 @@
 import { useReducer } from "react";
 import { AppActions, appReducer } from "./app.reducer";
 import { CurrentPage } from "../domain/interfaces/app-state.interface";
+import type { Battle } from "../domain/interfaces/battle.interface";
 
 export const useHandleApp = () => {
   const [state, dispatch] = useReducer(appReducer, {
@@ -20,10 +21,26 @@ export const useHandleApp = () => {
       payload: { playerName }
     })
    }
+   
+   const setBattleState = (battleState: Battle) => {
+    dispatch({
+      type: AppActions.SET_BATTLE_STATE,
+      payload: { battleState }
+    })
+   }
+   
+   const setBattleStatus = (currentPage: CurrentPage, status: string) => {
+    dispatch({
+      type: AppActions.SET_BATTLE_STATUS,
+      payload: { currentPage, status }
+    })
+   }
 
   return {
     state,
     setCurrentPage,
-    setPlayerName
+    setPlayerName,
+    setBattleStatus,
+    setBattleState
   }
 }

@@ -1,42 +1,95 @@
-import { Alert, Button, Box, Stack, Typography } from "@mui/material";
+import { Alert, Button, Box, Stack, Typography, Paper, CircularProgress, Container } from "@mui/material";
 import FighterChooseItem from "./FighterChooseItem";
+
+interface PokemonTeam {
+  name: string;
+  img?: string;
+}
+
+type PokemonTeamItem = PokemonTeam | undefined;
 
 interface PlayerSelectionProps {
   direction?: "left" | "right";
   playerName: string;
-  type?: 'own' | 'opponent'
-
+  type?: "own" | "opponent";
+  pokemonTeam?: [PokemonTeamItem, PokemonTeamItem, PokemonTeamItem];
+  onSelectTeam?: () => void;
+  onReady?: () => void;
+  ready?: boolean;
 }
 
-const PlayerSelection = ({ direction = 'left', playerName, type = 'own'}: PlayerSelectionProps) => {
-  return (
-    <Stack spacing={2} minWidth={400} sx={{ transform: `skew(${direction === "left" ? 10 : -10}deg)` }}>
-      <Typography variant="h2" gutterBottom display="flex" justifyContent={ direction === "right" ? "end" : "start" }>
+const PlayerSelection = ({
+  direction = "left",
+  playerName,
+  type = "own",
+  pokemonTeam,
+  onSelectTeam: handleSelectTeam,
+  onReady: handleReady,
+  ready,
+}: PlayerSelectionProps) => {
+  return playerName ? (
+    <Stack
+      spacing={2}
+      minWidth={400}
+      sx={{ transform: `skew(${direction === "left" ? 10 : -10}deg)` }}
+    >
+      <Typography
+        variant="h2"
+        gutterBottom
+        display="flex"
+        justifyContent={direction === "right" ? "end" : "start"}
+      >
         {playerName}
       </Typography>
       <Box sx={{ display: "flex", gap: 2 }}>
-        <FighterChooseItem height={400} direction={direction} name="Hola" />
-        <FighterChooseItem height={400} direction={direction} />
-        <FighterChooseItem height={400} direction={direction} />
+        <FighterChooseItem height={400} direction={direction} name={pokemonTeam?.[0]?.name} />
+        <FighterChooseItem height={400} direction={direction} name={pokemonTeam?.[1]?.name} />
+        <FighterChooseItem height={400} direction={direction} name={pokemonTeam?.[2]?.name} />
       </Box>
       <Box sx={{ display: "flex", gap: 2 }}>
-        {type === 'own' ? (
+        {type === "own" && !ready ? (
           <>
-            <Button sx={{ flex: 1 }} variant="contained" color="primary" fullWidth>
+            <Button
+              sx={{ flex: 1 }}
+              variant="contained"
+              color="primary"
+              fullWidth
+              onClick={handleSelectTeam}
+            >
               Select Team
             </Button>
-            <Button sx={{ flex: 1 }} variant="contained" color="primary" fullWidth>
+            <Button
+              sx={{ flex: 1 }}
+              variant="contained"
+              color="primary"
+              fullWidth
+              onClick={handleReady}
+              disabled={pokemonTeam?.every((p) => p === null).valueOf()}
+            >
               Ready
             </Button>
           </>
-
         ) : (
-          <Alert sx={{ flex: 1 }} variant="filled" severity="warning">
-            Waiting for fighter to be ready...
+          <Alert sx={{ flex: 1 }} variant="filled" severity={ready ? "success" : "warning"}>
+            {ready ? "Ready to fight!" : "Waiting for fighter to be ready..."}
           </Alert>
         )}
       </Box>
     </Stack>
+  ) : (
+    <Container
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "100%",
+        transform: `skew(${direction === "left" ? 10 : -10}deg)`,
+      }}
+    >
+      <Typography variant="h6">Waiting for opponent...</Typography>
+      <CircularProgress size="3rem" />
+    </Container>
   );
 };
 

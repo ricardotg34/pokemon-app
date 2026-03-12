@@ -3,10 +3,12 @@ import type { ServerConectedDTO } from "../domain/dtos/server-connected.dto";
 import type { JoinLobbyResDTO } from "../domain/dtos/join-lobby.dto";
 import type { PokemonListResponseDataDTO } from "../domain/dtos/pokemon-team-response-data";
 import type { SimpleDTO } from "../domain/dtos/simple.dto";
+import type { Battle } from "../domain/interfaces/battle.interface";
 
 export class BattleService {
   private static _instance: BattleService;
   private static _url: string;
+  private static _socket: WebSocket;
 
   private constructor() {}
 
@@ -21,12 +23,16 @@ export class BattleService {
     return (BattleService._instance = new BattleService());
   }
 
-  public set url(url: string) {
+  public static set url(url: string) {
     BattleService._url = url;
   }
 
+  public get socket() {
+    return BattleService._socket;
+  }
+
   async connectToServer(url: string) {
-    const response = await axios.get<ServerConectedDTO>(url+'health');
+    const response = await axios.get<ServerConectedDTO>(url + "health");
 
     return response.data;
   }
@@ -48,26 +54,41 @@ export class BattleService {
     );
     return data;
   }
-  
+
   async playerReady(lobbyId: string, playerName: string) {
-    const { data } = await axios.put<SimpleDTO>(
-      BattleService._url + "api/battle/player_ready/",
-      {
-        lobbyId,
-        playerName,
-      },
-    );
+    const { data } = await axios.put<SimpleDTO>(BattleService._url + "api/battle/player_ready/", {
+      lobbyId,
+      playerName,
+    });
     return data;
   }
-  
+
   async attackMovement(lobbyId: string, playerName: string) {
-    const { data } = await axios.post<SimpleDTO>(
-      BattleService._url + "api/battle/player_ready/",
-      {
-        lobbyId,
-        playerName,
-      },
-    );
+    const { data } = await axios.post<SimpleDTO>(BattleService._url + "api/battle/player_ready/", {
+      lobbyId,
+      playerName,
+    });
     return data;
+  }
+
+  connectToWebSocket() {
+    BattleService._socket = new WebSocket(`ws://${BattleService._url.replace("http://", "")}ws`);
+
+    BattleService._socket.onclose = () => {
+      setTimeout(this.connectToWebSocket, 1500);
+    };
+
+    BattleService._socket.onopen = () => {
+      console.log("Connected");
+    };
+  }
+
+  onListenWSLobbyStatus(callback: (data: Battle) => void) {
+    BattleService._socket.onmessage = (event) => {
+      console.log(event.data);
+      const { type, payload } = JSON.parse(event.data);
+      if (type !== "lobbyStatus") return;
+      callback(payload);
+    };
   }
 }
