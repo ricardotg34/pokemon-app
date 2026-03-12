@@ -1,22 +1,22 @@
 import { Grid, Typography } from "@mui/material";
 import PlayerSelection from "../components/PlayerSelection";
 import { useContext } from "react";
-import { AppContext } from "../app-context/app-context";
+import { AppContext } from "../contexts/app-context/app-context";
 import { BattleService } from "../services/battle.service";
 
 const SelectTeamPage = () => {
   const { state } = useContext(AppContext);
 
-  const player1 = state.battleState?.players[0]
-  const player2 = state.battleState?.players[1]
+  const player1 = state.battleState?.players[0];
+  const player2 = state.battleState?.players[1];
 
   const handleSelectTeam = () => {
-    BattleService.instance.assignTeam(state.lobbyId!, state.playerName!)
-  }
+    BattleService.instance.assignTeam(state.lobbyId!, state.playerName!);
+  };
 
   const handleReady = () => {
-    BattleService.instance.playerReady(state.lobbyId!, state.playerName!)
-  }
+    BattleService.instance.playerReady(state.lobbyId!, state.playerName!);
+  };
 
   return (
     <>

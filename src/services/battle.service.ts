@@ -64,7 +64,7 @@ export class BattleService {
   }
 
   async attackMovement(lobbyId: string, playerName: string) {
-    const { data } = await axios.post<SimpleDTO>(BattleService._url + "api/battle/player_ready/", {
+    const { data } = await axios.post<SimpleDTO>(BattleService._url + "api/battle/attack_movement/", {
       lobbyId,
       playerName,
     });

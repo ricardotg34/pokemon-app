@@ -1,18 +1,13 @@
-import { Alert, Button, Box, Stack, Typography, Paper, CircularProgress, Container } from "@mui/material";
+import { Alert, Button, Box, Stack, Typography, CircularProgress, Container } from "@mui/material";
 import FighterChooseItem from "./FighterChooseItem";
+import type { PokemonTeamItemProp } from "../domain/interfaces/pokemon-tean-prop.interface";
 
-interface PokemonTeam {
-  name: string;
-  img?: string;
-}
-
-type PokemonTeamItem = PokemonTeam | undefined;
 
 interface PlayerSelectionProps {
   direction?: "left" | "right";
   playerName: string;
   type?: "own" | "opponent";
-  pokemonTeam?: [PokemonTeamItem, PokemonTeamItem, PokemonTeamItem];
+  pokemonTeam?: [PokemonTeamItemProp, PokemonTeamItemProp, PokemonTeamItemProp];
   onSelectTeam?: () => void;
   onReady?: () => void;
   ready?: boolean;

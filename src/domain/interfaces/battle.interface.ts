@@ -9,7 +9,7 @@ export interface PokemonState {
 }
 
 export type PokemonTeamItem = PokemonState | undefined;
-type PlayerItem = Player | undefined;
+export type PlayerItem = Player | undefined;
 
 export interface Player {
   name: string,
@@ -18,10 +18,12 @@ export interface Player {
   ready: boolean
 }
 
+export type BattleStatus = 'waiting' | 'ready' | 'battling' | 'finished'
+
 export interface Battle {
   lobby: string,
   players: [PlayerItem, PlayerItem],
-  status: 'waiting' | 'ready' | 'battling' | 'finished',
+  status: BattleStatus,
   turn?: number
 
 }

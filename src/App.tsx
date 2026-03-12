@@ -1,6 +1,6 @@
 import { useContext } from 'react'
-import { AppContext } from './app-context/app-context'
-import withAppContext from './app-context/withAppContext'
+import { AppContext } from './contexts/app-context/app-context'
+import withAppContext from './contexts/app-context/withAppContext'
 import './App.css'
 import FightPage from './pages/FightPage'
 import LandingPage from './pages/LandingPage'

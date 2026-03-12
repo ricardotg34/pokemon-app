@@ -1,4 +1,4 @@
-export interface Action<T> {
+export interface Action<S, T> {
   type: T;
-  payload: Record<string, any>
+  payload: S
 }

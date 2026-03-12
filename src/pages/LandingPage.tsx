@@ -3,11 +3,11 @@ import { Stack, Typography, Skeleton, Button } from "@mui/material";
 import { BattleService } from "../services/battle.service";
 import LandingDialog from "../components/LandingDialog";
 import { isAxiosError } from "axios";
-import { AppContext } from "../app-context/app-context";
+import { AppContext } from "../contexts/app-context/app-context";
 import { CurrentPage } from "../domain/interfaces/app-state.interface";
 
 const LandingPage = () => {
-  const { setCurrentPage, setPlayerName, setSocketConnection, setBattleStatus, setBattleState } = useContext(AppContext)
+  const { setCurrentPage, setPlayerName, setSocketConnection, setBattleStatus, setBattleState, setTurnRestult } = useContext(AppContext)
   const [openConnectServerDialog, setOpenConnectServerDialog] = useState(false);
   const [openJoinLobbyDialog, setOpenJoinLobbyDialog] = useState(false);
   const [isServerConnected, setServerConnected] = useState(false);
@@ -50,7 +50,7 @@ const LandingPage = () => {
       const url = new URL(serverUrl!.toString());
       await BattleService.instance.connectToServer(url.toString());
       BattleService.url = url.toString();
-      setSocketConnection(url.toString(), setBattleState, setBattleStatus)
+      setSocketConnection(url.toString(), setBattleState, setBattleStatus, setTurnRestult)
       setServerConnected(true);
       setDialogError(undefined);
       handleCloseConnectServer();

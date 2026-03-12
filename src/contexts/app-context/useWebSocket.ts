@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import type { Battle } from "../domain/interfaces/battle.interface";
-import { CurrentPage } from "../domain/interfaces/app-state.interface";
+import type { Battle, BattleStatus, PlayerItem } from "../../domain/interfaces/battle.interface";
+import { CurrentPage } from "../../domain/interfaces/app-state.interface";
 
 const useWebSocket = () => {
   const [isReady, setIsReady] = useState(false);
@@ -10,7 +10,8 @@ const useWebSocket = () => {
   const setSocketConnection = (
     url: string,
     lobbyStatusCallback: (data: Battle) => void,
-    battleStartCallback: (currentPage: CurrentPage, status: string) => void,
+    battleStartCallback: (currentPage: CurrentPage, turn: number, status: BattleStatus) => void,
+    turnResultCallback: (turn: number, players: [PlayerItem, PlayerItem]) => void
   ) => {
     const socket = new WebSocket(`ws://${url.replace("http://", "")}ws`);
 
@@ -25,7 +26,8 @@ const useWebSocket = () => {
       console.log(event.data);
       const { type, payload } = JSON.parse(event.data);
       if (type === "lobby_status") lobbyStatusCallback(payload);
-      if (type === "battle_start") battleStartCallback( CurrentPage.BATTLE, payload );
+      if (type === "battle_start") battleStartCallback( CurrentPage.BATTLE, payload.turn, payload.status );
+      if (type === "turn_result") turnResultCallback( payload.turn, payload.players );
     };
 
     ws.current = socket;
