@@ -1,5 +1,5 @@
 import { Stack, Paper, LinearProgress, Typography } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 interface FighterInfoProps {
   direction?: "left" | "right";
