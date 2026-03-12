@@ -1,4 +1,13 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, Paper } from "@mui/material";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Grid,
+  Paper,
+} from "@mui/material";
 import TeamInfo from "../components/TeamInfo";
 import { AppContext } from "../contexts/app-context/app-context";
 import { useContext, useEffect, useState } from "react";
@@ -8,30 +17,30 @@ import { CurrentPage } from "../domain/interfaces/app-state.interface";
 const FightPage = () => {
   const { state, setCurrentPage } = useContext(AppContext);
   const [openDialog, setOpenDialog] = useState(false);
-  const [playerResult, setPlayerResult] = useState<"win" | "lose">()
-  const i = state.battleState?.players.findIndex((p) => p?.name === state.playerName)
+  const [playerResult, setPlayerResult] = useState<"win" | "lose">();
+  const i = state.battleState?.players.findIndex((p) => p?.name === state.playerName);
 
   const player1 = state.battleState?.players[0];
   const player2 = state.battleState?.players[1];
 
   useEffect(() => {
-    if(state.battleState?.status === 'finished'){
-      if(state.battleState?.players[i!]?.pokemonTeam.every((p) => p?.hp === 0)) setPlayerResult("lose")
-      else setPlayerResult("win")
-     
+    if (state.battleState?.status === "finished") {
+      console.log(state.battleState?.players[i!]?.pokemonTeam);
+      if (state.battleState?.players[i!]?.pokemonTeam.every((p) => p?.hp === 0))
+        setPlayerResult("lose");
+      else setPlayerResult("win");
+
       handleClickOpen();
     }
-  }, [state.battleState?.status])
-  
+  }, [state.battleState?.status]);
 
   const handleHit = () => {
     try {
       BattleService.instance.attackMovement(state.lobbyId!, state.playerName!);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
-
+  };
 
   const handleClickOpen = () => {
     setOpenDialog(true);
@@ -72,18 +81,21 @@ const FightPage = () => {
       <Grid size={6} display="flex" justifyContent="center">
         <Paper elevation={3} sx={{ height: 400, aspectRatio: "1 / 1" }} />
       </Grid>
-      <Grid size={6} display="flex" justifyContent="center" offset={i ? "auto" : undefined}>
-        <Button variant="contained" color="primary" size="large" onClick={handleHit} disabled={i !== state.battleState?.turn}>
-          Hit
-        </Button>
-      </Grid>
-      <Dialog
-        open={openDialog}
-        onClose={handleClose}
-      >
-        <DialogTitle id="alert-dialog-title">
-          {"BATTLE END!"}
-        </DialogTitle>
+      {state.battleState?.status === "battling" ? (
+        <Grid size={6} display="flex" justifyContent="center" offset={i ? "auto" : undefined}>
+          <Button
+            variant="contained"
+            color="primary"
+            size="large"
+            onClick={handleHit}
+            disabled={i !== state.battleState?.turn}
+          >
+            Hit
+          </Button>
+        </Grid>
+      ) : undefined}
+      <Dialog open={openDialog} onClose={handleClose}>
+        <DialogTitle id="alert-dialog-title">{"BATTLE END!"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
             The battle has finished, you {playerResult}.
