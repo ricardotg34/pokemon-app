@@ -3,7 +3,7 @@ import { AppContext } from './app-context/app-context'
 import withAppContext from './app-context/withAppContext'
 import './App.css'
 import FightPage from './pages/FightPage'
-import Landing from './pages/LandingPage'
+import LandingPage from './pages/LandingPage'
 import SelectTeamPage from './pages/SelectTeamPage'
 import { CurrentPage } from './domain/interfaces/app-state.interface'
 
@@ -16,7 +16,7 @@ function App() {
     case CurrentPage.BATTLE:
       return <FightPage />
     default:
-      return <Landing />
+      return <LandingPage />
   }
 }
 

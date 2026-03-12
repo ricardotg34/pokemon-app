@@ -12,7 +12,7 @@ export class BattleService {
 
   public static get instance(): BattleService {
     if (!BattleService._instance) {
-      throw new Error("PokemonService not initialized. Call initPokemonService first.");
+      this.initPokemonService();
     }
     return BattleService._instance;
   }
@@ -26,7 +26,7 @@ export class BattleService {
   }
 
   async connectToServer(url: string) {
-    const response = await axios.get<ServerConectedDTO>(url);
+    const response = await axios.get<ServerConectedDTO>(url+'health');
 
     return response.data;
   }

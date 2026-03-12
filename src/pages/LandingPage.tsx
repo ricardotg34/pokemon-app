@@ -1,38 +1,61 @@
-import { useState } from "react";
-import {
-  Stack,
-  Typography,
-  Skeleton,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  TextField,
-} from "@mui/material";
+import { useContext, useState } from "react";
+import { Stack, Typography, Skeleton, Button } from "@mui/material";
+import { BattleService } from "../services/battle.service";
+import LandingDialog from "../components/LandingDialog";
+import { isAxiosError } from "axios";
+import { AppContext } from "../app-context/app-context";
+import { CurrentPage } from "../domain/interfaces/app-state.interface";
 
-const Landing = () => {
+const LandingPage = () => {
+  const { setCurrentPage, setPlayerName } = useContext(AppContext)
+  const [openConnectServerDialog, setOpenConnectServerDialog] = useState(false);
+  const [openJoinLobbyDialog, setOpenJoinLobbyDialog] = useState(false);
+  const [isServerConnected, setServerConnected] = useState(false);
+  const [dialogError, setDialogError] = useState<string>();
 
-  const [open, setOpen] = useState(false);
-  const [textButton, setTextButton] = useState("Connect to a server")
-
-  const handleClickOpen = () => {
-    setOpen(true);
+  const handleButton = async () => {
+    if(!isServerConnected) setOpenConnectServerDialog(true);
+    else setOpenJoinLobbyDialog(true);
   };
 
-  const handleClose = () => {
-    setOpen(false);
+  const handleCloseConnectServer = () => {
+    setOpenConnectServerDialog(false);
+    setDialogError(undefined);
+  };
+  
+  const handleCloseJoinLobby = () => {
+    setOpenJoinLobbyDialog(false);
+    setDialogError(undefined);
   };
 
-  const handleSubmit = (event: React.SubmitEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const formJson = Object.fromEntries((formData as any).entries());
-    const serverUrl = formJson["server-url"];
-    console.log(serverUrl);
-    setTextButton(`Join Lobby`);
-    handleClose();
+  const handleJoinLobbyAction = async (formData: FormData) => {
+    const nickname = formData.get("nickname");
+    try {
+      const data = await BattleService.instance.joinLobby(nickname!.toString());
+      console.log(data);
+      setDialogError(undefined);
+      handleCloseJoinLobby();
+      setPlayerName(nickname!.toString())
+      setCurrentPage(CurrentPage.SELECT_TEAM);
+    } catch (error) {
+      if(isAxiosError(error)) setDialogError(error.response?.data.error); 
+      else setDialogError("Unable to join the lobby");
+    }
+  }
+
+  const handleAction = async (formData: FormData) => {
+    const serverUrl = formData.get("server-url");
+    try {
+      const url = new URL(serverUrl!.toString());
+      await BattleService.instance.connectToServer(url.toString());
+      BattleService.instance.url = url.toString();
+      setServerConnected(true);
+      setDialogError(undefined);
+      handleCloseConnectServer();
+    } catch (error) {
+      if(error instanceof TypeError) setDialogError("Type a valid URL");
+      else setDialogError("Unable to connect the server.");
+    }
   };
 
   return (
@@ -47,39 +70,39 @@ const Landing = () => {
           Pokemon Stadium Lite
         </Typography>
         <Skeleton variant="rectangular" width="100%" height="50vh" />
-        <Button variant="contained" color="primary" fullWidth onClick={handleClickOpen} size="large">
-          {textButton}
+        <Button
+          color="primary"
+          fullWidth
+          onClick={handleButton}
+          size="large"
+          variant="contained"
+        >
+          {isServerConnected ? "Join Lobby" : "Connect to the Server"}
         </Button>
+        <LandingDialog
+          description="To start playing, please enter the server's url."
+          error={dialogError}
+          fieldLabel="Server URL"
+          fieldName="server-url"
+          onClose={handleCloseConnectServer}
+          onFormAction={handleAction}
+          open={openConnectServerDialog}
+          title="Connect to server"
+        />
         
-        <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
-          <DialogTitle>Connect to server</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              To start playing, please enter the server's url.
-            </DialogContentText>
-            <form onSubmit={handleSubmit} id="subscription-form">
-              <TextField
-                autoFocus
-                required
-                margin="normal"
-                id="name"
-                name="server-url"
-                label="Server URL"
-                type="text"
-                fullWidth
-              />
-            </form>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose}>Cancel</Button>
-            <Button type="submit" form="subscription-form" variant="contained" color="primary">
-              Connect
-            </Button>
-          </DialogActions>
-        </Dialog>
+        <LandingDialog
+          description="Please, type your nickname."
+          error={dialogError}
+          fieldLabel="Nickname"
+          fieldName="nickname"
+          onClose={handleCloseJoinLobby}
+          onFormAction={handleJoinLobbyAction}
+          open={openJoinLobbyDialog}
+          title="Join Lobby"
+        />
       </Stack>
     </>
   );
 };
 
-export default Landing;
+export default LandingPage;
