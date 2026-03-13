@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Stack, Typography, Skeleton, Button } from "@mui/material";
 import { BattleService } from "../services/battle.service";
 import LandingDialog from "../components/LandingDialog";
@@ -7,14 +7,32 @@ import { AppContext } from "../contexts/app-context/app-context";
 import { CurrentPage } from "../domain/interfaces/app-state.interface";
 
 const LandingPage = () => {
-  const { setCurrentPage, setPlayerName, setSocketConnection, setBattleStatus, setBattleState, setTurnRestult } = useContext(AppContext)
+  const {
+    setCurrentPage,
+    setPlayerName,
+    setSocketConnection,
+    setBattleStatus,
+    setBattleState,
+    setTurnRestult,
+    setLobbyId,
+  } = useContext(AppContext);
   const [openConnectServerDialog, setOpenConnectServerDialog] = useState(false);
   const [openJoinLobbyDialog, setOpenJoinLobbyDialog] = useState(false);
   const [isServerConnected, setServerConnected] = useState(false);
   const [dialogError, setDialogError] = useState<string>();
+  
+  
+  useEffect(() => {
+    const serverLocalStorage = localStorage.getItem("server_url");
+    if(serverLocalStorage){
+      setServerConnected(true);
+      BattleService.url = serverLocalStorage;
+      setSocketConnection(serverLocalStorage, setBattleState, setBattleStatus, setTurnRestult);
+    }
+  }, [])
 
   const handleButton = async () => {
-    if(!isServerConnected) setOpenConnectServerDialog(true);
+    if (!isServerConnected) setOpenConnectServerDialog(true);
     else setOpenJoinLobbyDialog(true);
   };
 
@@ -22,7 +40,7 @@ const LandingPage = () => {
     setOpenConnectServerDialog(false);
     setDialogError(undefined);
   };
-  
+
   const handleCloseJoinLobby = () => {
     setOpenJoinLobbyDialog(false);
     setDialogError(undefined);
@@ -31,30 +49,32 @@ const LandingPage = () => {
   const handleJoinLobbyAction = async (formData: FormData) => {
     const nickname = formData.get("nickname");
     try {
-      await BattleService.instance.joinLobby(nickname!.toString());
+      const data = await BattleService.instance.joinLobby(nickname!.toString());
+      setLobbyId(data.lobbyId);
       setDialogError(undefined);
       handleCloseJoinLobby();
-      setPlayerName(nickname!.toString())
+      setPlayerName(nickname!.toString());
       setCurrentPage(CurrentPage.SELECT_TEAM);
     } catch (error) {
-      if(isAxiosError(error)) setDialogError(error.response?.data.error); 
+      if (isAxiosError(error)) setDialogError(error.response?.data.error);
       else setDialogError("Unable to join the lobby");
     }
-  }
+  };
 
   const handleAction = async (formData: FormData) => {
     const serverUrl = formData.get("server-url");
     try {
       const url = new URL(serverUrl!.toString());
       await BattleService.instance.connectToServer(url.toString());
+      localStorage.setItem("server_url", url.toString())
       BattleService.url = url.toString();
-      setSocketConnection(url.toString(), setBattleState, setBattleStatus, setTurnRestult)
+      setSocketConnection(url.toString(), setBattleState, setBattleStatus, setTurnRestult);
       setServerConnected(true);
       setDialogError(undefined);
       handleCloseConnectServer();
     } catch (error) {
-      console.log(error)
-      if(error instanceof TypeError) setDialogError("Type a valid URL");
+      console.log(error);
+      if (error instanceof TypeError) setDialogError("Type a valid URL");
       else setDialogError("Unable to connect the server.");
     }
   };
@@ -71,13 +91,7 @@ const LandingPage = () => {
           Pokemon Stadium Lite
         </Typography>
         <Skeleton variant="rectangular" width="100%" height="50vh" />
-        <Button
-          color="primary"
-          fullWidth
-          onClick={handleButton}
-          size="large"
-          variant="contained"
-        >
+        <Button color="primary" fullWidth onClick={handleButton} size="large" variant="contained">
           {isServerConnected ? "Join Lobby" : "Connect to the Server"}
         </Button>
         <LandingDialog
@@ -90,7 +104,7 @@ const LandingPage = () => {
           open={openConnectServerDialog}
           title="Connect to server"
         />
-        
+
         <LandingDialog
           description="Please, type your nickname."
           error={dialogError}
