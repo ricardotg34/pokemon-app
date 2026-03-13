@@ -20,6 +20,7 @@ const useWebSocket = () => {
       setIsReady(true);
     };
     socket.onclose = () => {
+      setTimeout(() => setSocketConnection(url, lobbyStatusCallback, battleStartCallback, turnResultCallback), 1500);
       setIsReady(false);
     };
     socket.onmessage = (event) => {
