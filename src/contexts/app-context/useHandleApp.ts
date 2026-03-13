@@ -8,6 +8,13 @@ export const useHandleApp = () => {
     currentPage: CurrentPage.LANDING
   });
 
+  const setLobbyId = (lobbyId: string) => {
+    dispatch({
+      type: Actions.SET_LOBBY_ID,
+      payload: lobbyId
+    })
+  }
+
   const setCurrentPage = (currentPage: CurrentPage) => {
     dispatch({
       type: Actions.SET_CURRENT_PAGE,
@@ -54,6 +61,7 @@ export const useHandleApp = () => {
     setPlayerName,
     setBattleStatus,
     setBattleState,
-    setTurnRestult
+    setTurnRestult,
+    setLobbyId
   }
 }
