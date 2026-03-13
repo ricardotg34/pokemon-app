@@ -7,7 +7,7 @@ interface PlayerSelectionProps {
   direction?: "left" | "right";
   playerName: string;
   type?: "own" | "opponent";
-  pokemonTeam?: [PokemonTeamItemProp, PokemonTeamItemProp, PokemonTeamItemProp];
+  pokemonTeam?: PokemonTeamItemProp[];
   onSelectTeam?: () => void;
   onReady?: () => void;
   ready?: boolean;
@@ -59,7 +59,7 @@ const PlayerSelection = ({
               color="primary"
               fullWidth
               onClick={handleReady}
-              disabled={pokemonTeam?.every((p) => p === null).valueOf()}
+              disabled={!pokemonTeam || pokemonTeam.length !== 3}
             >
               Ready
             </Button>

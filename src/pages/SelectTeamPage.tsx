@@ -30,11 +30,7 @@ const SelectTeamPage = () => {
           <PlayerSelection
             type={player1?.name === state.playerName ? "own" : "opponent"}
             playerName={player1?.name ?? ""}
-            pokemonTeam={[
-              player1?.pokemonTeam[0],
-              player1?.pokemonTeam[1],
-              player1?.pokemonTeam[2],
-            ]}
+            pokemonTeam={player1?.pokemonTeam}
             onSelectTeam={player1?.name === state.playerName ? handleSelectTeam : undefined}
             onReady={player1?.name === state.playerName ? handleReady : undefined}
             ready={player1?.ready}
@@ -49,11 +45,7 @@ const SelectTeamPage = () => {
           <PlayerSelection
             type={player2?.name === state.playerName ? "own" : "opponent"}
             playerName={player2?.name ?? ""}
-            pokemonTeam={[
-              player2?.pokemonTeam[0],
-              player2?.pokemonTeam[1],
-              player2?.pokemonTeam[2],
-            ]}
+            pokemonTeam={player2?.pokemonTeam}
             onSelectTeam={player2?.name === state.playerName ? handleSelectTeam : undefined}
             onReady={player2?.name === state.playerName ? handleReady : undefined}
             direction="right"

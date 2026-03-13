@@ -20,6 +20,7 @@ const TeamInfo = ({
   activeFighter,
 }: TeamInfoProps) => {
   const activePokemon = pokemonTeam[activeFighter];
+  
 
   const sortedTeam = [...pokemonTeam].sort((a, b) => {
     if (a.name === activePokemon.name) return -1;
